@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "keymanager",
   "version": "0.0.1",
   "description": "Sample External Key Manager Node.js application",
   "homepage": "https://github.com/vivocha/keymanager",
