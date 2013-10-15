@@ -1,11 +1,14 @@
 
-/**
- * Module dependencies.
- */
-
 var express = require('express');
 var http = require('http');
 var crypto = require('crypto');
+
+// Put here your Vivocha Account secret token (you can find it in Settings->Security). Must be a 96 bytes hex string.
+var secret = '47242e604a74ea7854787a14ac1afaf438aeb56a7c471ba3b3269731819a3d80de339f4a3d3b5b920d16d2d4dde1ac2d';
+
+var fakeKey = crypto.randomBytes(8).toString('hex') +                             // random data (8 bytes as 16 bytes hex string)
+              'babababababababababababababababa' +                                // fake IV     (128 bits as 32 bytes hex string)
+              'cacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacaca'; // fake key    (256 bits as 64 bytes hex string)
 
 var app = express();
 
@@ -22,8 +25,6 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-var secret = '47242e604a74ea7854787a14ac1afaf438aeb56a7c471ba3b3269731819a3d80de339f4a3d3b5b920d16d2d4dde1ac2d';
-
 function encrypt(_key, data) {
   if (_key.length != (128 + 256) / 8 * 2) throw new Error('invalid_key');
   var iv = new Buffer(_key.substr(0, 128 / 8 * 2), 'hex');
@@ -34,8 +35,6 @@ function encrypt(_key, data) {
   c += e.final('base64');
   return c;
 }
-
-var fakeKey = crypto.randomBytes(8).toString('hex') + 'cacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacaca';
 
 function createKey(id, copyFrom) {
   if (copyFrom) {
