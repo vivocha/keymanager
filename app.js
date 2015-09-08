@@ -6,8 +6,7 @@ var crypto = require('crypto');
 // Put here your Vivocha Account secret token (you can find it in Settings->Security). Must be a 96 bytes hex string.
 var secret = '47242e604a74ea7854787a14ac1afaf438aeb56a7c471ba3b3269731819a3d80de339f4a3d3b5b920d16d2d4dde1ac2d';
 
-var fakeKey = crypto.randomBytes(8).toString('hex') +                             // random data (8 bytes as 16 bytes hex string)
-              'babababababababababababababababa' +                                // fake IV     (128 bits as 32 bytes hex string)
+var fakeKey = 'babababababababababababababababa' +                                // fake IV     (128 bits as 32 bytes hex string)
               'cacacacacacacacacacacacacacacacacacacacacacacacacacacacacacacaca'; // fake key    (256 bits as 64 bytes hex string)
 
 var app = express();
@@ -25,10 +24,12 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-function encrypt(_key, data) {
+function encrypt(_key, _data) {
   if (_key.length != (128 + 256) / 8 * 2) throw new Error('invalid_key');
   var iv = new Buffer(_key.substr(0, 128 / 8 * 2), 'hex');
   var key = new Buffer(_key.substr(128 / 8 * 2), 'hex');
+
+  var data = crypto.randomBytes(8).toString('hex') + _data;
 
   var e = crypto.createCipheriv('AES256', key, iv);
   var c = e.update(data, 'utf8', 'base64');
